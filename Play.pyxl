@@ -1,0 +1,61 @@
+Play
+════════════════════════════════════════════════════════════════════════
+
+let pos = xy(½ SCREEN_SIZE.x, 132)
+let flip = xy(1, 1)
+
+let width = 48
+let height = 48
+let grid = []
+let frame = 0
+
+for 0 <= y < height:
+    for 0 <= x < width:
+        if (random(0,100) < 50):
+            push(grid, 0)
+        else:
+            push(grid, 1)
+    
+def count_neighbours(g, x, y):
+    let count = 0
+    
+    for -1 ≤ yy ≤ 1:
+        for -1 ≤ xx ≤ 1:
+            if (xx == 0) && (yy == 0):
+                continue
+            let dx = loop(x + xx, 0, width)
+            let dy = loop(y + yy, 0, height)
+            if (g[dy * width + dx]):
+                count++
+    
+    return count
+
+def run_ca(g):
+    let ret = deep_clone(g)
+    for 0 ≤ y < height:
+        for 0 <= x < width:
+            let n = count_neighbours(g, x, y)
+            let idx = y * width + x
+            if (g[idx]):
+                if (n < 2) || (n > 3):
+                    ret[idx] = 0
+            else:
+                if (n == 3):
+                    ret[idx] = 1
+    return ret
+
+frame
+────────────────────────────────────────────────────────────────────────
+
+frame++
+if (frame mod 5 == 0): 
+    grid = run_ca(grid)
+
+set_background(rgb(20%, 50%, 80%))
+
+draw_text(font, "Game of Life", xy(½ SCREEN_SIZE.x, SCREEN_SIZE.y - 20), rgba(1,1,1,1), ∅, ∅, 0, 0)
+
+for 0 < y < height:
+    for 0 < x < width:
+        if (grid[y * width + x]):
+            draw_corner_rect(xy(x*4, y*4), xy(4, 4), #DDD)
